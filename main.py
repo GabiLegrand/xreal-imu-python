@@ -1,40 +1,12 @@
+from XrealIMU import XrealIMU
 
-import ctypes
 
+if __name__ == "__main__":
+    imu = XrealIMU()
+    imu.start_connection()
 
-class XrealIMU:
-    """
-    Simple class extracting IMU data from Xreals using the AirAPI_Windows dll.
-    Require hidapi.dll 
-    """
-    def __init__(self, dll_path='./AirAPI_Windows.dll'):
-        self.path = dll_path
-        self.api = ctypes.CDLL(dll_path)
-    
-    def start_connection(self):
-        self.api.StartConnection()
-        self.api.GetQuaternion.restype = ctypes.POINTER(ctypes.c_float)
-        self.api.GetEuler.restype = ctypes.POINTER(ctypes.c_float)
-        return 1
-    
-    def get_euler(self):
-        elr_ptr =  self.api.GetEuler()
-        euler = [elr_ptr[i] for i in range(3)]
-        return euler
-    def get_quaternion(self):
-        quats = self.api.GetQuaternion()
-        quaternion = [quats[i] for i in range(4)]
-        return quaternion
+    print("Eurler : ", imu.get_euler())
+    print("Quaternion : ", imu.get_quaternion())
+    print("Brightness : ", imu.get_brightness())
 
-    def get_brightness(self):        
-        brigthness = self.api.GetBrightness()
-        return brigthness
-    
-    def stop_connection(self):
-        self.api.StopConnection()
-        return 1
-    
-
-imu = XrealIMU()
-imu.start_connection()
-imu.stop_connection()
+    imu.stop_connection()
